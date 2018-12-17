@@ -16,6 +16,7 @@ content = r.text
 soup = bs4.BeautifulSoup(content, 'html.parser')
 td_ys = soup.find_all(attrs={"class" : "y"})
 td_xs = soup.find_all(attrs={"class" : "x"})
+#print randomly selected x and y coordinates from the website
 print(td_ys)
 print(td_xs)
 
@@ -42,16 +43,16 @@ f.close() 	# Don't close until you are done with the reader;
 #    return (((agents_row_a.x - agents_row_b.x)**2) + 
 #        ((agents_row_a.y - agents_row_b.y)**2))**0.5
 
-num_of_agents = len(td_ys)
-num_of_iterations = 10
+num_of_agents = len(td_ys)#to select all the agents available from the list on the website
+num_of_iterations = 10#the number of times random agents are generated in a loop
 neighbourhood = 20
 
 fig = matplotlib.pyplot.figure(figsize=(7, 7))
 ax = fig.add_axes([0, 0, 1, 1])
-# Make the agents and connecting with the environment.
-agents = []
+# Make the agents and connect with the environment.
+agents = []#create container for agents
 
-for i in range(num_of_agents):
+for i in range(num_of_agents):#defining the iterations or how agents will move
         y = int(td_ys[i].text)
         x = int(td_xs[i].text)
         agents.append(agentframework.Agent(environment,agents, y, x))
@@ -62,8 +63,9 @@ def update(frame_number):
     fig.clear()
     global carry_on
    
-# Move and eat agents with every move or iteration.
-    for j in range(num_of_iterations):
+# Move and eat agents with every move or iteration 
+#to prevent reselection of agents which have already been randomly selected 
+    for j in range(num_of_iterations):#define the loop within the loop
         for i in range(num_of_agents):
             agents[i].move()
             agents[i].eat()
@@ -81,14 +83,18 @@ def update(frame_number):
 # End loop         
       
 # plot
-    matplotlib.pyplot.xlim(0, 100) #make 100 the limit for the plot axes
+#make 100 the limit for the plot axes 
+#because that is the maximum value which can be selected for the agents in the source data    
+    matplotlib.pyplot.xlim(0, 100)
     matplotlib.pyplot.ylim(0, 100)
     matplotlib.pyplot.imshow(environment)
     for i in range(num_of_agents):
         matplotlib.pyplot.scatter(agents[i].x,agents[i].y)    
-    
+
+#set stopping condition
+#if number generated is less than specified figure then the model will stop eating agents    
     if random.random() < 0.01:
-        carry_on = False
+        carry_on = False#do not continue
         print("stopping condition")
 #animation = matplotlib.animation.FuncAnimation(fig, update, interval=1)
 
@@ -101,17 +107,17 @@ def gen_function(b = [0]):
     
 
 
-#add a function that will run our model.
+#add a function that will run our animated model.
 #We'll connect this to our menu such that when the menu is clicked, 
 #this function will run, in line with the event based programming model.
 def run():
     animation = matplotlib.animation.FuncAnimation(fig, update, frames=gen_function, repeat=False)
     canvas.show()
 
-#BUILDING THE GUI
+#BUILDING THE GUI- ghraphical user interface
 #builds the main window ("root"); sets its title, 
 #then creates and lays out a matplotlib canvas embedded within our window 
-#and associated with fig, our matplotlib figure.
+#and associated with fig, our matplotlib figure with the predefined boundaries.
 root = tkinter.Tk() 
 root.wm_title("Agent Based Model")
 canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
